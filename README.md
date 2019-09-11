@@ -1,3 +1,3 @@
 # YILIN-LI
 
-# Junior
+Junior, Math-Cs major
