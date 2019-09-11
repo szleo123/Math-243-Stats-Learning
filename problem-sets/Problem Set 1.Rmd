@@ -10,7 +10,49 @@ output: github_document
 ### Chapter 2 exercises
 
 #### Exercise 1
+a) better. With an extremely large sample set, we can fit a really good flexible model more close to the data. 
 
+b) worse. A flexible model will overfit such small sample. 
 
+c) better. A flexible model will fit better in more complicated relations.
+
+d) worse. A flexible model will also fit the noise term into the model and increase the total error. 
+
+#### Exercise 2
+a) regression. inference. n = '500 firms in the US'; p = 3 'profit, number of employees, industry'.
+
+b) classification. prediction. n = '20 similar products'; p = 13 'price charged, marketing budget, comp. price, ten other variables'
+
+c) regression. prediction. n = 52 ' weekly data for all of 2012'; p = 3 '%change in the US market, the % change in the British market,and the % change in the German market.'
+
+#### Exercise 4
+a) 1. picture recognition. responses are 'cat, dog, pig...'. predictors are features extracted from the pictures. It's for inference. 
+   2. disease diagnose. responses are 'have disease/not have disease'. predictors are indicators of body inspection. It's for inference. 
+   3. whether give the applier insurance. responses are 'give/don't give'. predictors are living area, parents, economic situation. It's an inference. 
+
+b) 1. predict the house price. responses are house prices. predictors are size of the house, surrounding facilities, years of the house. It's a prediction 
+   2. final score prediction. responses are scores. predictors are time of studying per week, concentration on the exam, mood. It's a prediction 
+   3. next year's salary predict. responses are salary numbers. predictors are occupations, working time per week. It's a prediction. 
+
+c) 1. recommending system. recommend customers products liked by similar customers.
+   2. illness classification. judge different type of illness.
+   3. ethics classification. classify different ethics with similar characteristics. 
+   
+#### Exercise 5
+advantages: more close to the true relationship. better prediction results
+disadvantages: more tending to be overfitting. need to fit a lot of parameters 
+
+When we need to predict something and a lot of data, we prefer a more flexible approach to get a better prediction result. When we need to make an inference to explain something, we prefer to use a less flexible approach to avoid high variance.
+
+#### Exercise 6 
+parametric model: pre-set a set of parameters to fit from data
+non-parametric model: does not require a function form. fit with data directly.
+
+advantages of parametric models: not too many parameters to fit. less data needed compared to non-parametric models
+disadvantages of parametric models: those parameters might not really reflect the true relation and some of the parameters could be redundant to fit.
 
 ### Additional exercises
+Input: X, a 10*4096 matrix where each row is a photo, each column is a pixel position.
+Transformed Input: X，a 10*n matrix where each column becomes the extracted feature. 
+Output: y, a column vector with length 10. 
+Model: convolutional neural network 
