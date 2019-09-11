@@ -1,0 +1,16 @@
+---
+title: "Problem Set 1"
+author: "YILIN LI"
+date: "2019/9/10"
+output: github_document
+---
+
+* * *
+
+### Chapter 2 exercises
+
+#### Exercise 1
+
+
+
+### Additional exercises
