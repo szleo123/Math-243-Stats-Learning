@@ -61,7 +61,10 @@ group_B_automated_fit <- function(data){
   }
   
   # resulting model is below:
-  #(Intercept)          state   racePctWhite       pctUrban      PctEmploy MalePctDivorce   FemalePctDiv     PersPerFam    0.200527854   -0.001300984   -0.188668931    0.054425195   -0.157910910    0.354996125   -0.041471460    0.158280517    PctIlleg   PctHousOccup      NumStreet                                                                                 0.375654821   -0.085362549    0.197275651 
+  #(Intercept)          state   racePctWhite       pctUrban      PctEmploy MalePctDivorce   FemalePctDiv     PersPerFam    
+  #0.200527854   -0.001300984   -0.188668931    0.054425195   -0.157910910    0.354996125   -0.041471460    0.158280517    
+  #PctIlleg   PctHousOccup      NumStreet                                                                                 
+  #0.375654821   -0.085362549    0.197275651 
   
   
   # fit this model with lm()
