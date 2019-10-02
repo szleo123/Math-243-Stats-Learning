@@ -11,8 +11,6 @@ output: pdf_document
 d <- read.csv("http://andrewpbray.github.io/data/crime-train.csv")
 
 group_B_process <- function(training_data) {
-  # Select out variables to be fitted in the model
-  training_data = training_data[,sapply(training_data, is.numeric)]
   
   # create transformed data columns
   training_data = mutate(training_data,NumIllegsr = sqrt(NumIlleg))
@@ -21,7 +19,10 @@ group_B_process <- function(training_data) {
 
 
 group_B_fit <- function(training_data) {
-
+  
+  # process data first
+  training_data = group_B_process(training_data)
+  
   # run lm() to fit your model.
   lm(ViolentCrimesPerPop ~ racePctWhite + PctKids2Par +NumIllegsr, data = training_data)
 
