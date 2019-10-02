@@ -10,36 +10,61 @@ output: pdf_document
 ```{r}
 d <- read.csv("http://andrewpbray.github.io/data/crime-train.csv")
 
-group_B_fit <- function(training_data) {
+group_B_process <- function(training_data) {
   # Select out variables to be fitted in the model
-  training_data = d[1:600,c(8,49,54,127)]
+  training_data = training_data[,sapply(training_data, is.numeric)]
+  
+  # create transformed data columns
+  training_data = mutate(training_data,NumIllegsr = sqrt(NumIlleg))
 
-  # Filter out the observations with missing data 
-  filtered_data = training_data[rowSums(!is.na(training_data)) == 4,]
-  filtered_data = mutate(filtered_data,NumIllegsr = sqrt(NumIlleg))
+}
+
+
+group_B_fit <- function(training_data) {
 
   # run lm() to fit your model.
-  m1 = lm(ViolentCrimesPerPop ~ racePctWhite + PctKids2Par +NumIllegsr, data = filtered_data)
+  lm(ViolentCrimesPerPop ~ racePctWhite + PctKids2Par +NumIllegsr, data = training_data)
 
-  # on the last line, simply put m1, your final model.
-  # this will return it as output.
-  m1
 }
 
 group_B_MSE <- function(model, data) {
-  # when you run group_A_fit, save the output and put 
-  # it here as the "model" argument.
   
-  data = mutate(data, NumIllegsr = sqrt(NumIlleg))
-  # use your model to find the predicted values for 
-  # all of the observations in the data set.
+  # process the data first 
+  data = group_B_process(data)
+  
+  # find true values and predicted values
   p = predict(model, data)
   true_values = data$ViolentCrimesPerPop
-  # use those fitted values and the true values to
-  # compute the MSE, which this function should return
-  # as output.
-  MSE = mean((p - true_values)^2)
   
-  MSE
+  # return the MSE value 
+  mean((p - true_values)^2)
+}
+
+group_B_automated_fit <- function(data){
+  
+  # delete columns with '?' in it
+  new_data = data[,sapply(data, is.numeric)]
+  
+  # create two subsets with models using forward selection and backward selection seperately. 
+  forward = regsubsets(ViolentCrimesPerPop ~ ., data = new_data, nvmax = 25, method = "forward")
+  backward = regsubsets(ViolentCrimesPerPop ~ ., data = new_data, nvmax = 25, method = "backward")
+  
+  # select out the best model with the lowest BIC
+  minBIC_forward = min(summary(forward)$bic)
+  minBIC_backward = min(summary(backward)$bic)
+  if(minBIC_backward < minBIC_forward){
+    index = which.min(summary(backward)$bic)
+    model = coef(backward,index)
+  } else {
+    index = which.min(summary(forward)$bic)
+    model = coef(forward,index)
+  }
+  
+  # resulting model is below:
+  #(Intercept)          state   racePctWhite       pctUrban      PctEmploy MalePctDivorce   FemalePctDiv     PersPerFam    0.200527854   -0.001300984   -0.188668931    0.054425195   -0.157910910    0.354996125   -0.041471460    0.158280517    PctIlleg   PctHousOccup      NumStreet                                                                                 0.375654821   -0.085362549    0.197275651 
+  
+  
+  # fit this model with lm()
+  lm(ViolentCrimesPerPop ~ state + racePctWhite + pctUrban + PctEmploy + MalePctDivorce + FemalePctDiv + PersPerFam + PctIlleg + PctHousOccup + NumStreet , data = new_data)
 }
 ```
