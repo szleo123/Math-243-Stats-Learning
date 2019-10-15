@@ -59,3 +59,5 @@ conf_lda <- table(my_lda_pred,
 ## 
 MSE_log <- (1/nrow(Default_test)) *(conf_log[2, 1] + conf_log[1, 2])
 MSE_lda <- (1/nrow(Default_test)) * (conf_lda[2, 1] + conf_lda[1, 2])
+
+```
