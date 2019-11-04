@@ -1,0 +1,190 @@
+---
+title: "lab6"
+author: "YILIN LI"
+date: "2019/11/3"
+output: pdf_document
+---
+
+### Lab 6 
+
+
+#### Q1
+```{r}
+library(ISLR)
+library(tidyverse)
+library(DAAG)
+
+# 1st part
+d <- read.csv("https://bit.ly/36kibHZ")
+d["MAPE"] <- d$Price/d$Earnings_10MA_back
+summary(d)
+d <-na.omit(d)
+
+# 2nd part 
+m1 <- lm(Return_10_fwd ~ MAPE, data = d)
+summary(m1)
+
+# 3rd part
+k = 5
+partition_index =  sample(1:5,nrow(d),replace = TRUE)
+MSE_i = rep(NA, k)
+
+for(i in 1:k) {
+  train = d[partition_index!=i,]
+  test = d[partition_index==i,]
+  m1_cv = lm(Return_10_fwd ~ MAPE, data = train)
+  pd = predict(m1_cv,newdata = test)
+  MSE_i[i] = mean((pd - test$Return_10_fwd)^2)
+}
+mean(MSE_i)
+
+```
+1. There are exactly 120 NAs because the new column "MAPE" is created from "Price" and "Earnings_10MA_back", where
+"Earnings_10MA_back" has 120 NAs. 
+
+2. The coefficient is -0.0045885 and its standard error is 0.0001727. It's significant because of its small p-value. 
+
+3. Clearly, the MSE of this model under five-fold CV is 0.00187. 
+
+
+#### Q2 
+```{r}
+# 1st part
+d["inverse_MAPE"] = 1/d$MAPE
+m2 <- lm(Return_10_fwd ~ inverse_MAPE, data = d)
+summary(m2)
+
+# 2nd part 
+k = 5
+partition_index =  sample(1:5,nrow(d),replace = TRUE)
+MSE_i = rep(NA, k)
+
+for(i in 1:k) {
+  train = d[partition_index!=i,]
+  test = d[partition_index==i,]
+  m2_cv = lm(Return_10_fwd ~ inverse_MAPE, data = train)
+  pd = predict(m2_cv,newdata = test)
+  MSE_i[i] = mean((pd - test$Return_10_fwd)^2)
+}
+mean(MSE_i)
+```
+1. The coefficient is 0.99590 and its standard error is 0.03651. It's significant because of its small p-value.
+
+2. Clearly, the MSE of this model under five-fold CV is 0.00184, which is less than the previous one. 
+
+
+#### Q3 
+```{r}
+# 1st part 
+training_MSE = mean((d$inverse_MAPE-d$Return_10_fwd)^2)
+training_MSE
+```
+1. The training MSE is 0.0019. 
+
+2. It illustrates that this simple model is a good model to approximate the return. 
+
+
+#### Q4
+```{r}
+# 1st part 
+library(ggplot2)
+slopes = rep(NA,5000)
+for (i in 1:5000){
+  boot_ind = sample(1:nrow(d),size = nrow(d),replace = TRUE)
+  d_boot = d[boot_ind,]
+  slopes[i] = coef(lm(Return_10_fwd ~ inverse_MAPE,data=d_boot))[2]
+}
+ggplot(data.frame("slopes" = slopes), aes(x = slopes)) +
+  geom_histogram(binwidth = .005,color = 'black',fill='white') + 
+  geom_vline(aes(xintercept=1), color="red", linetype="dashed", size=1)
+
+# 2nd part 
+SE = sqrt(var(slopes))
+up = mean(slopes)+ SE
+down = mean(slopes) - SE
+
+confint(m2)
+```
+So the 95% confident interval by bootstrapping is (0.965, 1.03) and the result from the model in question 2 is 
+(0.9243, 1.06753). It's worth noticing that they both centered at 0.996, but the later interval has a greater range,
+approximately twice of the first interval. 
+
+
+#### Q5
+```{r}
+d["pd1"] = predict(m1)
+d["pd2"] = predict(m2)
+ggplot(data = d, aes(x = MAPE, y = Return_10_fwd)) + 
+  geom_point() + 
+  geom_line(aes(x = MAPE, y = pd1, color = "m1")) + 
+  geom_line(aes(x = MAPE, y = pd2, color = "m2")) + 
+  geom_line(aes(x = MAPE, y = inverse_MAPE, color = "simple-minded"))
+```
+
+
+#### The big picture 
+1. I will use the second model m2 to make predictions. From the plot above, it shows that it performs well with lower 
+MAPEs but badly on large MAPEs. 
+
+2. Yes, it's a plausible model. One obvious evidence is that the confidence interval of it is included in the m2 model as we illustrated above. 
+
+
+
+### Exercises 
+#### Q4 
+We could use the bootstrap method to approximate it. We can bootstrap a large number of times $B$ and fit $B$ models
+with different bootstrap dataset. Then predict $Y$ with each model and then we have a distribution of the predicted 
+result, and thus can find the standard deviation of our prediction. 
+
+
+#### Q8 
+a.
+```{r}
+set.seed(1)
+x = rnorm(100)
+y = x-2*x^2+rnorm(100)
+```
+$n = 100,p=2$
+$Y=X-2X^2+\epsilon$
+
+b.
+```{r}
+d2 = data.frame("X" = x,"Y" = y)
+ggplot(data = d2, aes(x = X, y = Y)) + 
+  geom_point()
+```
+It seems like the shape of this data is in quadratic form. 
+
+c. 
+```{r}
+library(boot)
+set.seed(2)
+cv.error = rep(0,4)
+for(i in 1:4){
+  glm.fit=glm(Y~poly(X,i) ,data=d2)
+  cv.error[i] = cv.glm(d2,glm.fit)$delta[1]
+}
+cv.error
+```
+
+d. 
+```{r}
+library(boot)
+set.seed(3)
+cv.error = rep(0,4)
+for(i in 1:4){
+  glm.fit=glm(Y~poly(X,i) ,data=d2)
+  cv.error[i] = cv.glm(d2,glm.fit)$delta[1]
+}
+cv.error
+```
+They are the same because LOOCV evaluates n folds of 1 observation, no randomness here. 
+
+e. 
+The quadratic polynomial had the lowest LOOCV test error rate. This is what we expected. 
+
+f. 
+```{r}
+summary(glm.fit)
+```
+Clearly, polynomials of 3 and 4 are not significant which agrees with the result of CV. 
