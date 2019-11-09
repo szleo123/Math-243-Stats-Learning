@@ -27,6 +27,8 @@ t1 = tree(group~., data = df, split = "gini")
 plot(t1)
 text(t1,pretty = 0)
 ```
+
+
 1. Neither of the splits is the first split of the tree. 
 
 2. Even though the second split predicts all data as square, it's useful because this split could futher increase the 
@@ -41,6 +43,8 @@ t2 = tree(group~., data = df, split = "deviance")
 plot(t2)
 text(t2,pretty = 0)
 ```
+
+
 Using deviance as the split method is different from using gini index because with deviance, the tree will try to lower 
 the misclassification rate, but with gini, the tree will try to increase purity among terminals. 
 
@@ -71,6 +75,8 @@ MSE_lm = mean((pd_lm - test_data$ViolentCrimesPerPop)^2)
 MSE_tree
 MSE_lm
 ```
+
+
 So, clearly, the pruned tree has a lower test MSE than our linear fitting. 
 
 
@@ -87,6 +93,8 @@ MSE_rf2 = mean((pd_rf2-test_data$ViolentCrimesPerPop)^2)
 MSE_rf1
 MSE_rf2
 ```
+
+
 It turns out both the bagging trees and the random forest have lower test MSE than the pruned tree and linear regression
 model. 
 
@@ -95,4 +103,6 @@ model.
 ```{r}
 importance = varImpPlot(rf)
 ```
+
+
 The result turns out to be quite similar to our analysis in our linear model. "PctKids2Par" has the highest correlation with the "ViolentCrimesPerPop" and here also influences the randomForest model the most.  
