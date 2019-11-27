@@ -73,3 +73,20 @@ pc_grid(pca1, d_c)
 ```
 
 It seems like pc1 and pc2 represent the general shape of the letter "c"
+
+
+
+```{r}
+rot1 <- pca1$rotation
+plot_letter(rot1[,1],hasletter = F)
+plot_letter(rot1[,2],hasletter = F)
+plot_letter(rot1[,3],hasletter = F)
+```
+
+
+Here's the image reconstruction using the first 2 PCs
+```{r}
+plot_letter(d_c[1,],hasletter = T)
+plot_letter(mean_c + pca1$x[1,1:10]%*%t(rot1[,1:10]), hasletter = F)
+plot_letter(mean_c + pca1$x[2,1:10]%*%t(rot1[,1:10]), hasletter = F)
+```
