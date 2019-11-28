@@ -90,3 +90,33 @@ plot_letter(d_c[1,],hasletter = T)
 plot_letter(mean_c + pca1$x[1,1:10]%*%t(rot1[,1:10]), hasletter = F)
 plot_letter(mean_c + pca1$x[2,1:10]%*%t(rot1[,1:10]), hasletter = F)
 ```
+
+```{r}
+d <- read.csv("https://raw.githubusercontent.com/stat-learning/course-materials/master/data/handwritten.csv")
+d_p <- d[d["letter"] == "p", ] # include only letter "p"
+mean_p <- colMeans(d_p[,-1])   # not include the first column "letter"
+plot_letter(mean_p, hasletter = F)
+
+pca2 <- prcomp(d_p[,-1], scale = T)
+d <- data.frame(PC = 1:20,
+                PVE = (pca2$sdev^2 /
+                  sum(pca2$sdev^2))[1:20])
+ggplot(d, aes(x = PC, y = PVE)) +
+  geom_line() + 
+  geom_point()
+
+pc_grid(pca2, d_p)
+```
+
+```{r}
+rot2 <- pca2$rotation
+plot_letter(rot2[,1],hasletter = F)
+plot_letter(rot2[,2],hasletter = F)
+plot_letter(rot2[,3],hasletter = F)
+```
+
+```{r}
+plot_letter(d_p[1,],hasletter = T)
+plot_letter(mean_p + pca2$x[1,1:10]%*%t(rot2[,1:10]), hasletter = F)
+plot_letter(mean_p + pca2$x[2,1:10]%*%t(rot2[,1:10]), hasletter = F)
+```
