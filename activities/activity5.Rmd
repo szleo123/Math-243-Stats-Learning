@@ -10,38 +10,28 @@ d <- read.delim("https://raw.githubusercontent.com/stat-learning/course-material
 Kmean_2 <- kmeans(d[,-1], centers = 2)
 Kmean_3 <- kmeans(d[,-1], centers = 3)
 Kmean_4 <- kmeans(d[,-1], centers = 4)
-
+Kmean_2$tot.withinss
+Kmean_3$tot.withinss
+Kmean_4$tot.withinss
 ```
+
+## Q2 
+So the best clustering is K = 4. 
+
+
+
 ## Q1 
 Numerical variables are correlated predictors with poverty rate. 
 
-## Q2 
-```{r}
-# 2 clusterings
-clus2_1 <- d[,1][Kmean_2$cluster==1]
-clus2_2 <- d[,1][Kmean_2$cluster==2]
 
-# 3 clusterings
-clus3_1 <- d[,1][Kmean_3$cluster==1]
-clus3_2 <- d[,1][Kmean_3$cluster==2]
-clus3_3 <- d[,1][Kmean_3$cluster==3]
-
-# 4 clusterings 
-clus4_1 <- d[,1][Kmean_4$cluster==1]
-clus4_2 <- d[,1][Kmean_4$cluster==2]
-clus4_3 <- d[,1][Kmean_4$cluster==3]
-clus4_4 <- d[,1][Kmean_4$cluster==4]
-```
 
 ## Q3, Q4 
 ```{r}
 library(ggplot2)
 pca <- prcomp(d[,-1], scale = T)
 pca_2 <- pca$x[,1:2]
-cluster2 <- ggplot(data.frame(pca_2), aes(x=PC1, y=PC2) ) + geom_point(color = Kmean_2$cluster)
-cluster3 <- ggplot(data.frame(pca_2), aes(x=PC1, y=PC2) ) + geom_point(color = Kmean_3$cluster)
-cluster4 <- ggplot(data.frame(pca_2), aes(x=PC1, y=PC2) ) + geom_point(color = Kmean_4$cluster)
-cluster2
-cluster3
+cluster4 <- ggplot(data.frame(pca_2), aes(x=PC1, y=PC2) ) + 
+                      geom_point(color = Kmean_4$cluster) + 
+                      ggrepel::geom_text_repel(label = d[,1], size = 2)
 cluster4
 ```
